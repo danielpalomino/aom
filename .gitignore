@@ -5,5 +5,3 @@ cmbuild
 .vscode
 .gitignore
 TAGS
-objects
-.git/objects
