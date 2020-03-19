@@ -6,3 +6,4 @@ cmbuild
 .gitignore
 TAGS
 objects
+.git/objects
