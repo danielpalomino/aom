@@ -5,3 +5,7 @@ cmbuild
 .vscode
 .gitignore
 TAGS
+CMakeCache.txt
+CMakeFiles/
+nbproject/
+

@@ -831,6 +831,30 @@ static AOM_INLINE void pick_sb_modes(AV1_COMP *const cpi,
 #endif
     switch (pick_mode_type) {
       case PICK_MODE_RD:
+          switch(bsize){
+                case BLOCK_4X4:  fprintf(stdout,"\nEntrou no intra BLOCK_4X4"); break;
+                case BLOCK_4X8:  fprintf(stdout,"\nEntrou no intra BLOCK_4X8"); break;
+                case BLOCK_8X4:  fprintf(stdout,"\nEntrou no intra BLOCK_8X4"); break;
+                case BLOCK_8X8:  fprintf(stdout,"\nEntrou no intra BLOCK_8X8"); break;
+                case BLOCK_8X16:  fprintf(stdout,"\nEntrou no intra BLOCK_8X16"); break;
+                case BLOCK_16X8:  fprintf(stdout,"\nEntrou no intra BLOCK_16X8"); break;
+                case BLOCK_16X16:  fprintf(stdout,"\nEntrou no intra BLOCK_16X16"); break;
+                case BLOCK_16X32:  fprintf(stdout,"\nEntrou no intra BLOCK_16X32"); break;
+                case BLOCK_32X16:  fprintf(stdout,"\nEntrou no intra BLOCK_32X16"); break;
+                case BLOCK_32X32:  fprintf(stdout,"\nEntrou no intra BLOCK_32X32"); break;
+                case BLOCK_32X64:  fprintf(stdout,"\nEntrou no intra BLOCK_32X64"); break;
+                case BLOCK_64X32:  fprintf(stdout,"\nEntrou no intra BLOCK_64X32"); break;
+                case BLOCK_64X64:  fprintf(stdout,"\nEntrou no intra BLOCK_64X64"); break;
+                case BLOCK_64X128:  fprintf(stdout,"\nEntrou no intra BLOCK_64X128"); break;
+                case BLOCK_128X64:  fprintf(stdout,"\nEntrou no intra BLOCK_128X64"); break;
+                case BLOCK_128X128:  fprintf(stdout,"\nEntrou no intra BLOCK_128X128"); break;
+                case BLOCK_4X16:  fprintf(stdout,"\nEntrou no intra BLOCK_4X16"); break;
+                case BLOCK_16X4:  fprintf(stdout,"\nEntrou no intra BLOCK_16X4"); break;
+                case BLOCK_8X32:  fprintf(stdout,"\nEntrou no intra BLOCK_8X32"); break;
+                case BLOCK_32X8:  fprintf(stdout,"\nEntrou no intra BLOCK_32X8"); break;
+                case BLOCK_16X64:  fprintf(stdout,"\nEntrou no intra BLOCK_16X64"); break;
+                case BLOCK_64X16:  fprintf(stdout,"\nEntrou no intra BLOCK_64X16"); break;
+          }
         av1_rd_pick_intra_mode_sb(cpi, x, rd_cost, bsize, ctx, best_rd.rdcost);
         break;
       case PICK_MODE_NONRD:
@@ -4527,7 +4551,7 @@ static AOM_INLINE void encode_rd_sb(AV1_COMP *cpi, ThreadData *td,
 #endif  // CONFIG_REALTIME_ONLY
 
   init_encode_rd_sb(cpi, td, tile_data, pc_root, &dummy_rdc, mi_row, mi_col, 1);
-
+  
   if (sf->part_sf.partition_search_type == VAR_BASED_PARTITION) {
     set_offsets_without_segment_id(cpi, tile_info, x, mi_row, mi_col, sb_size);
     av1_choose_var_based_partitioning(cpi, tile_info, x, mi_row, mi_col);
@@ -4744,7 +4768,7 @@ static AOM_INLINE void encode_sb_row(AV1_COMP *cpi, ThreadData *td,
           map ? get_segment_id(cm, map, sb_size, mi_row, mi_col) : 0;
       seg_skip = segfeature_active(seg, segment_id, SEG_LVL_SKIP);
     }
-
+    
     if (use_nonrd_mode) {
       encode_nonrd_sb(cpi, td, tile_data, pc_root, tp, mi_row, mi_col,
                       seg_skip);
@@ -5832,7 +5856,7 @@ void av1_encode_frame(AV1_COMP *cpi) {
 
     rdc->compound_ref_used_flag = 0;
     rdc->skip_mode_used_flag = 0;
-
+    
     encode_frame_internal(cpi);
 
     if (current_frame->reference_mode == REFERENCE_MODE_SELECT) {

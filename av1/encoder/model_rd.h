@@ -20,6 +20,10 @@
 #include "aom_ports/system_state.h"
 #include "config/aom_dsp_rtcd.h"
 
+//DANIEL BEGIN
+extern int intra_mode;
+//DANIEL END
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -174,7 +178,7 @@ static AOM_INLINE void model_rd_for_sb(
     int64_t sse;
     int rate;
     int64_t dist;
-
+    
     sse = calculate_sse(xd, p, pd, bw, bh);
 
     model_rd_from_sse(cpi, x, plane_bsize, plane, sse, bw * bh, &rate, &dist);
