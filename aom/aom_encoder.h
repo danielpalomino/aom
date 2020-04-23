@@ -387,7 +387,13 @@ typedef struct aom_codec_enc_cfg {
    * 0 is equivalent to the value 1.
    */
   unsigned int g_threads;
-
+  
+  //DANIEL BEGIN
+  double g_read_ber;
+  
+  double g_write_ber;
+  //DANIEL END
+  
   /*!\brief Bitstream profile to use
    *
    * Some codecs support a notion of multiple bitstream profiles. Typically

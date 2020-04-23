@@ -229,6 +229,12 @@ static const arg_def_t usage =
     ARG_DEF("u", "usage", 1, "Usage profile number to use");
 static const arg_def_t threads =
     ARG_DEF("t", "threads", 1, "Max number of threads to use");
+//DANIEL BEGIN
+static const arg_def_t read_ber =
+    ARG_DEF(NULL, "set-read-ber", 1, "Bit Error Rate for memory read");
+static const arg_def_t write_ber =
+    ARG_DEF(NULL, "set-write-ber", 1, "Bit Error Rate for memory read");
+//DANIEL END
 static const arg_def_t profile =
     ARG_DEF(NULL, "profile", 1, "Bitstream profile number to use");
 static const arg_def_t width = ARG_DEF("w", "width", 1, "Frame width");
@@ -1475,6 +1481,12 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
       config->write_ivf = 0;
     } else if (arg_match(&arg, &threads, argi)) {
       config->cfg.g_threads = arg_parse_uint(&arg);
+    //DANIEL BEGIN
+    } else if (arg_match(&arg, &read_ber,argi)) {
+      config->cfg.g_read_ber = arg_parse_double(&arg);
+    } else if (arg_match(&arg, &write_ber,argi)) {
+      config->cfg.g_write_ber = arg_parse_double(&arg);
+    //DANIEL END
     } else if (arg_match(&arg, &profile, argi)) {
       config->cfg.g_profile = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &width, argi)) {

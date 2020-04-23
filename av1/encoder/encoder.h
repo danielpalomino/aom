@@ -329,6 +329,11 @@ typedef struct AV1EncoderConfig {
   int enable_keyframe_filtering;
 
   int max_threads;
+  
+  //DANIEL BEGIN
+  double read_ber;
+  double write_ber;
+  //DANIEL END
 
   aom_fixed_buf_t two_pass_stats_in;
 

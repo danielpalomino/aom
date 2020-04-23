@@ -831,30 +831,6 @@ static AOM_INLINE void pick_sb_modes(AV1_COMP *const cpi,
 #endif
     switch (pick_mode_type) {
       case PICK_MODE_RD:
-          switch(bsize){
-                case BLOCK_4X4:  fprintf(stdout,"\nEntrou no intra BLOCK_4X4"); break;
-                case BLOCK_4X8:  fprintf(stdout,"\nEntrou no intra BLOCK_4X8"); break;
-                case BLOCK_8X4:  fprintf(stdout,"\nEntrou no intra BLOCK_8X4"); break;
-                case BLOCK_8X8:  fprintf(stdout,"\nEntrou no intra BLOCK_8X8"); break;
-                case BLOCK_8X16:  fprintf(stdout,"\nEntrou no intra BLOCK_8X16"); break;
-                case BLOCK_16X8:  fprintf(stdout,"\nEntrou no intra BLOCK_16X8"); break;
-                case BLOCK_16X16:  fprintf(stdout,"\nEntrou no intra BLOCK_16X16"); break;
-                case BLOCK_16X32:  fprintf(stdout,"\nEntrou no intra BLOCK_16X32"); break;
-                case BLOCK_32X16:  fprintf(stdout,"\nEntrou no intra BLOCK_32X16"); break;
-                case BLOCK_32X32:  fprintf(stdout,"\nEntrou no intra BLOCK_32X32"); break;
-                case BLOCK_32X64:  fprintf(stdout,"\nEntrou no intra BLOCK_32X64"); break;
-                case BLOCK_64X32:  fprintf(stdout,"\nEntrou no intra BLOCK_64X32"); break;
-                case BLOCK_64X64:  fprintf(stdout,"\nEntrou no intra BLOCK_64X64"); break;
-                case BLOCK_64X128:  fprintf(stdout,"\nEntrou no intra BLOCK_64X128"); break;
-                case BLOCK_128X64:  fprintf(stdout,"\nEntrou no intra BLOCK_128X64"); break;
-                case BLOCK_128X128:  fprintf(stdout,"\nEntrou no intra BLOCK_128X128"); break;
-                case BLOCK_4X16:  fprintf(stdout,"\nEntrou no intra BLOCK_4X16"); break;
-                case BLOCK_16X4:  fprintf(stdout,"\nEntrou no intra BLOCK_16X4"); break;
-                case BLOCK_8X32:  fprintf(stdout,"\nEntrou no intra BLOCK_8X32"); break;
-                case BLOCK_32X8:  fprintf(stdout,"\nEntrou no intra BLOCK_32X8"); break;
-                case BLOCK_16X64:  fprintf(stdout,"\nEntrou no intra BLOCK_16X64"); break;
-                case BLOCK_64X16:  fprintf(stdout,"\nEntrou no intra BLOCK_64X16"); break;
-          }
         av1_rd_pick_intra_mode_sb(cpi, x, rd_cost, bsize, ctx, best_rd.rdcost);
         break;
       case PICK_MODE_NONRD:
@@ -2735,7 +2711,7 @@ static bool rd_pick_partition(AV1_COMP *const cpi, ThreadData *td,
   av1_init_rd_stats(&this_rdc);
 
   set_offsets(cpi, tile_info, x, mi_row, mi_col, bsize);
-
+  
   // Save rdmult before it might be changed, so it can be restored later.
   const int orig_rdmult = x->rdmult;
   setup_block_rdmult(cpi, x, mi_row, mi_col, bsize, NO_AQ, NULL);
@@ -4598,7 +4574,7 @@ static AOM_INLINE void encode_rd_sb(AV1_COMP *cpi, ThreadData *td,
     min_sq_size = AOMMIN(min_sq_size, max_sq_size);
 
     const int num_passes = cpi->oxcf.sb_multipass_unit_test ? 2 : 1;
-
+    
     if (num_passes == 1) {
       rd_pick_partition(cpi, td, tile_data, tp, mi_row, mi_col, sb_size,
                         max_sq_size, min_sq_size, &dummy_rdc, dummy_rdc,

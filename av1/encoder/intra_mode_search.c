@@ -17,8 +17,7 @@
 #include "av1/encoder/tx_search.h"
 
 //DANIEL BEGIN
-int intra_mode;
-int intra_angle_delta;
+#include "aom/approx.h"
 //DANIEL END
 
 static const PREDICTION_MODE intra_rd_search_mode_order[INTRA_MODES] = {
@@ -213,16 +212,29 @@ static int64_t intra_model_yrd(const AV1_COMP *const cpi, MACROBLOCK *const x,
   const int max_blocks_high = max_block_high(xd, bsize, 0);
   mbmi->tx_size = tx_size;
   // Prediction.
+  //DANIEL BEGIN
+  set_write_ber(cpi->oxcf.write_ber);
+  //DANIEL END
   for (row = 0; row < max_blocks_high; row += stepr) {
     for (col = 0; col < max_blocks_wide; col += stepc) {
       av1_predict_intra_block_facade(cm, xd, 0, col, row, tx_size);
     }
   }
+  //DANIEL BEGIN
+  set_write_ber(0.0);
+//  fprintf(stdout,"read_ber=%.7f\n",cpi->oxcf.read_ber);
+//  fprintf(stdout,"write_ber=%.7f\n",cpi->oxcf.write_ber);
+  set_read_ber(cpi->oxcf.read_ber);
+  //DANIEL END
   // RD estimation.
   model_rd_sb_fn[cpi->sf.rt_sf.use_simple_rd_model ? MODELRD_LEGACY
                                                    : MODELRD_TYPE_INTRA](
       cpi, bsize, x, xd, 0, 0, &this_rd_stats.rate, &this_rd_stats.dist,
       &this_rd_stats.skip, &temp_sse, NULL, NULL, NULL);
+  
+  //DANIEL BEGIN
+  set_read_ber(0.0);
+  //DANIEL END
   if (av1_is_directional_mode(mbmi->mode) && av1_use_angle_delta(bsize)) {
     mode_cost +=
         x->angle_delta_cost[mbmi->mode - V_PRED]
@@ -267,9 +279,6 @@ static int64_t calc_rd_given_intra_angle(
     RD_STATS *rd_stats, int *best_angle_delta, TX_SIZE *best_tx_size,
     int64_t *best_rd, int64_t *best_model_rd, uint8_t *best_tx_type_map,
     uint8_t *best_blk_skip, int skip_model_rd) {
-    //DANIEL BEGIN
-    intra_angle_delta = angle_delta;
-    //DANIEL END
   RD_STATS tokenonly_rd_stats;
   int64_t this_rd;
   MACROBLOCKD *xd = &x->e_mbd;
@@ -1675,38 +1684,6 @@ static int64_t rd_pick_intra_angle_sby(const AV1_COMP *const cpi, MACROBLOCK *x,
       const int64_t best_rd_in =
           (best_rd == INT64_MAX) ? INT64_MAX
                                  : (best_rd + (best_rd >> (first_try ? 3 : 5)));
-      //DANIEL BEGIN
-//      switch(intra_mode) {
-//          case DC_PRED: fprintf(stdout,"\n\t\tCalculating rd for intra mode DC_PRED ");
-//                        break;
-//          case V_PRED:  fprintf(stdout,"\n\t\tCalculating rd for intra mode V_PRED ");
-//                        break;
-//          case H_PRED:  fprintf(stdout,"\n\t\tCalculating rd for intra mode H_PRED ");
-//                        break;
-//          case D45_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode D45_PRED ");
-//                            break;
-//          case D135_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D135_PRED ");
-//                            break;
-//          case D113_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D113_PRED ");
-//                            break;
-//          case D157_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D157_PRED ");
-//                            break;
-//          case D203_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D203_PRED ");
-//                            break;
-//          case D67_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode D67_PRED ");
-//                            break;
-//          case SMOOTH_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode SMOOTH_PRED ");
-//                            break;
-//          case SMOOTH_V_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode SMOOTH_V_PRED ");
-//                            break;
-//          case SMOOTH_H_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode SMOOTH_H_PRED ");
-//                            break;                            
-//          case PAETH_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode PAETH_PRED ");
-//                            break;
-//          default: fprintf(stdout,"\n\t\tMODE %d UNKNOWN ", intra_mode);
-//      }
-//      fprintf(stdout,"and intra angle %d\n",(1 - 2 * i) * angle_delta);
-      //DANIEL END
       const int64_t this_rd = calc_rd_given_intra_angle(
           cpi, x, bsize, mode_cost, best_rd_in, (1 - 2 * i) * angle_delta,
           MAX_ANGLE_DELTA, rate, rd_stats, &best_angle_delta, &best_tx_size,
@@ -1731,38 +1708,6 @@ static int64_t rd_pick_intra_angle_sby(const AV1_COMP *const cpi, MACROBLOCK *x,
           rd_cost[2 * (angle_delta - 1) + i] > rd_thresh)
         skip_search = 1;
       if (!skip_search) {
-          //DANIEL BEGIN
-//          switch(intra_mode) {
-//          case DC_PRED: fprintf(stdout,"\n\t\tCalculating rd for intra mode DC_PRED ");
-//                        break;
-//          case V_PRED:  fprintf(stdout,"\n\t\tCalculating rd for intra mode V_PRED ");
-//                        break;
-//          case H_PRED:  fprintf(stdout,"\n\t\tCalculating rd for intra mode H_PRED ");
-//                        break;
-//          case D45_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode D45_PRED ");
-//                            break;
-//          case D135_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D135_PRED ");
-//                            break;
-//          case D113_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D113_PRED ");
-//                            break;
-//          case D157_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D157_PRED ");
-//                            break;
-//          case D203_PRED:   fprintf(stdout,"\n\t\tCalculating rd for intra mode D203_PRED ");
-//                            break;
-//          case D67_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode D67_PRED ");
-//                            break;
-//          case SMOOTH_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode SMOOTH_PRED ");
-//                            break;
-//          case SMOOTH_V_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode SMOOTH_V_PRED ");
-//                            break;
-//          case SMOOTH_H_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode SMOOTH_H_PRED ");
-//                            break;     
-//          case PAETH_PRED:    fprintf(stdout,"\n\t\tCalculating rd for intra mode PAETH_PRED ");
-//                            break;
-//          default: fprintf(stdout,"\n\t\tMODE %d UNKNOWN ", intra_mode);
-//      }
-//      fprintf(stdout,"and intra angle %d####\n",(1 - 2 * i) * angle_delta);
-      //DANIEL END
         calc_rd_given_intra_angle(
             cpi, x, bsize, mode_cost, best_rd, (1 - 2 * i) * angle_delta,
             MAX_ANGLE_DELTA, rate, rd_stats, &best_angle_delta, &best_tx_size,
@@ -2044,9 +1989,6 @@ int64_t av1_rd_pick_intra_sby_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
 
   /* Y Search for intra prediction mode */
   for (int mode_idx = INTRA_MODE_START; mode_idx < INTRA_MODE_END; ++mode_idx) {
-      //DANIEL BEGIN
-      intra_mode=mode_idx;
-      //DANIEL END
     RD_STATS this_rd_stats;
     int this_rate, this_rate_tokenonly, s;
     int64_t this_distortion, this_rd;
@@ -2115,9 +2057,6 @@ int64_t av1_rd_pick_intra_sby_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
     }
   }
   
-  //DANIEL BEGIN
-      intra_mode=-1;
-  //DANIEL END
 
   if (try_palette) {
     rd_pick_palette_intra_sby(

@@ -60,6 +60,9 @@ char **argv_dup(int argc, const char **argv);
 
 unsigned int arg_parse_uint(const struct arg *arg);
 int arg_parse_int(const struct arg *arg);
+//DANIEL BEGIN
+double arg_parse_double(const struct arg *arg);
+//DANIEL END
 struct aom_rational arg_parse_rational(const struct arg *arg);
 int arg_parse_enum(const struct arg *arg);
 int arg_parse_enum_or_int(const struct arg *arg);

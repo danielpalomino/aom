@@ -76,6 +76,10 @@
 #include "av1/encoder/reconinter_enc.h"
 #include "av1/encoder/var_based_part.h"
 
+//DANIEL BEGIN
+#include "aom/approx.h"
+//DANIEL END
+
 #if CONFIG_TUNE_VMAF
 #include "av1/encoder/tune_vmaf.h"
 #endif
@@ -5375,6 +5379,11 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest) {
   int undershoot_seen = 0;
   int low_cr_seen = 0;
   int last_loop_allow_hp = 0;
+  
+  //DANIEL BEGIN
+  int my_stride, my_height, my_width;
+  const uint8_t *begin, *end;
+  //DANIEL END
 
   do {
     loop = 0;
@@ -5417,12 +5426,21 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest) {
 
     av1_set_variance_partition_thresholds(cpi, q, 0);
 
-     printf("\nFrame %d/%d: q = %d, frame_type = %d superres_denom = %d\n",
-            cm->current_frame.frame_number, cm->show_frame, q,
-            cm->current_frame.frame_type, cm->superres_scale_denominator);
+//     printf("\nFrame %d/%d: q = %d, frame_type = %d superres_denom = %d\n",
+//            cm->current_frame.frame_number, cm->show_frame, q,
+//            cm->current_frame.frame_type, cm->superres_scale_denominator);
 
     if (loop_count == 0) {
       setup_frame(cpi);
+      //DANIEL BEGIN            
+      my_stride=(&(&cpi->common)->cur_frame->buf)->strides[PLANE_TYPE_Y];
+      my_height=(&(&cpi->common)->cur_frame->buf)->heights[PLANE_TYPE_Y];
+      my_width=(&(&cpi->common)->cur_frame->buf)->widths[PLANE_TYPE_Y];
+      
+      begin=(&(&cpi->common)->cur_frame->buf)->buffers[PLANE_TYPE_Y];
+      end = begin +(my_stride*my_height+my_width-1);
+      //DANIEL END
+      
     } else if (get_primary_ref_frame_buf(cm) == NULL) {
       // Base q-index may have changed, so we need to assign proper default coef
       // probs before every iteration.
@@ -5470,7 +5488,15 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest) {
     }
 
     // transform / motion compensation build reconstruction frame
+    //DANIEL BEGIN
+    set_write_ber(0.0);
+    set_read_ber(0.0);    
+    add_approx((unsigned long long)(begin), (unsigned long long) (end));
+    //DANIEL END
     av1_encode_frame(cpi);
+    //DANIEL BEGIN
+    remove_approx((unsigned long long)(begin), (unsigned long long) (end));
+    //DANIEL END    
 #if !CONFIG_REALTIME_ONLY
     // Reset the mv_stats in case we are interrupted by an intraframe or an
     // overlay frame.

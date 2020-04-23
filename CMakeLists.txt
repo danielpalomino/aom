@@ -107,6 +107,7 @@ list(APPEND AOM_SOURCES
             "${AOM_ROOT}/aom/aom.h"
             "${AOM_ROOT}/aom/aom_codec.h"
             "${AOM_ROOT}/aom/aom_decoder.h"
+            "${AOM_ROOT}/aom/approx.h"
             "${AOM_ROOT}/aom/aom_encoder.h"
             "${AOM_ROOT}/aom/aom_frame_buffer.h"
             "${AOM_ROOT}/aom/aom_image.h"
@@ -117,6 +118,7 @@ list(APPEND AOM_SOURCES
             "${AOM_ROOT}/aom/internal/aom_image_internal.h"
             "${AOM_ROOT}/aom/src/aom_codec.c"
             "${AOM_ROOT}/aom/src/aom_decoder.c"
+            "${AOM_ROOT}/aom/src/approx.c"
             "${AOM_ROOT}/aom/src/aom_encoder.c"
             "${AOM_ROOT}/aom/src/aom_image.c"
             "${AOM_ROOT}/aom/src/aom_integer.c")

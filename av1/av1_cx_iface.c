@@ -701,6 +701,10 @@ static aom_codec_err_t set_encoder_config(AV1EncoderConfig *oxcf,
   oxcf->profile = cfg->g_profile;
   oxcf->fwd_kf_enabled = cfg->fwd_kf_enabled;
   oxcf->max_threads = (int)cfg->g_threads;
+  //DANIEL BEGIN
+  oxcf->read_ber=(double) cfg->g_read_ber;
+  oxcf->write_ber=(double) cfg->g_write_ber;
+  //DANIEL END
   oxcf->mode = (cfg->g_usage == AOM_USAGE_REALTIME) ? REALTIME : GOOD;
   oxcf->width = cfg->g_w;
   oxcf->height = cfg->g_h;
@@ -2759,6 +2763,8 @@ static aom_codec_enc_cfg_map_t encoder_usage_cfg_map[] = {
         // NOLINT
         AOM_USAGE_GOOD_QUALITY,  // g_usage - non-realtime usage
         0,                       // g_threads
+        0.0,                     //DANIEL read_ber
+        0.0,                     //DANIEL write ber
         0,                       // g_profile
 
         320,         // g_width
@@ -2830,6 +2836,8 @@ static aom_codec_enc_cfg_map_t encoder_usage_cfg_map[] = {
         // NOLINT
         AOM_USAGE_REALTIME,  // g_usage - real-time usage
         0,                   // g_threads
+        0.0,                 // DANIEL read_ber
+        0.0,                 // DANIEL write_ber
         0,                   // g_profile
 
         320,         // g_width

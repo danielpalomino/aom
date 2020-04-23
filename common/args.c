@@ -259,6 +259,23 @@ int arg_parse_int(const struct arg *arg) {
   return 0;
 }
 
+//DANIEL BEGIN
+double arg_parse_double(const struct arg *arg) {
+  char *endptr;
+  const double rawval = strtod(arg->val, &endptr);
+
+  if (arg->val[0] != '\0' && endptr[0] == '\0') {
+    if (rawval >= 0.0 && rawval <= 1.0) return (double)rawval;
+
+    die("Option %s: Value %f out of range for signed double\n", arg->name,
+        rawval);
+  }
+
+  die("Option %s: Invalid character '%c'\n", arg->name, *endptr);
+  return 0.0;
+}
+//DANIEL END
+
 struct aom_rational arg_parse_rational(const struct arg *arg) {
   long int rawval;
   char *endptr;
