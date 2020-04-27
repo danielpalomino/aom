@@ -2151,19 +2151,27 @@ static void show_psnr(struct stream_state *stream, double peak, int64_t bps) {
 
   if (!stream->psnr_count) return;
 
-  fprintf(stderr, "Stream %d PSNR (Overall/Avg/Y/U/V)", stream->index);
+  //DANIEL changed stderr to stdout to better capture coding efficiency results
+  
+//  fprintf(stderr, "Stream %d PSNR (Overall/Avg/Y/U/V)", stream->index);
+  fprintf(stdout, "Stream %d PSNR (Overall/Avg/Y/U/V)", stream->index);
   ovpsnr = sse_to_psnr((double)stream->psnr_samples_total, peak,
                        (double)stream->psnr_sse_total);
-  fprintf(stderr, " %.3f", ovpsnr);
+//  fprintf(stderr, " %.3f", ovpsnr);
+  fprintf(stdout, " %.3f", ovpsnr);
 
   for (i = 0; i < 4; i++) {
-    fprintf(stderr, " %.3f", stream->psnr_totals[i] / stream->psnr_count);
+//    fprintf(stderr, " %.3f", stream->psnr_totals[i] / stream->psnr_count);
+    fprintf(stdout, " %.3f", stream->psnr_totals[i] / stream->psnr_count);
   }
   if (bps > 0) {
-    fprintf(stderr, " %7" PRId64 " bps", bps);
+//    fprintf(stderr, " %7" PRId64 " bps", bps);
+    fprintf(stdout, " %7" PRId64 " bps", bps);
   }
   fprintf(stderr, " %7" PRId64 " ms", stream->cx_time / 1000);
-  fprintf(stderr, "\n");
+  fprintf(stdout, " %7" PRId64 " ms", stream->cx_time / 1000);
+//  fprintf(stderr, "\n");
+  fprintf(stdout, "\n");
 }
 
 static float usec_to_fps(uint64_t usec, unsigned int frames) {
